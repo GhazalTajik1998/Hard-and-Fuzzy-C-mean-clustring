@@ -5,17 +5,48 @@ import matplotlib.pyplot as plt
 # Constant
 C = 3           # No. Cluster
 K = 42          # No. data
-M = 2
-F = 1
+M = 2           # Fuzzy controller
+F = 1           # Flag : 1 for Fuzzy, 0 for Hard clustring
 
 def compute_J(d, U):
+    """
+    Compute Error function : 
+    Hard c-mean error : SUM(U * D^2)
+    Fuzzy c-means error : SUM(U^M * D^2)
+    Parameters
+    ------
+    d : K * C array
+        distance of each data from C
+    U : C * K array
+        Membership values of data for each cluster
+
+    Returns
+    ------
+    Calculated error
+    """   
 
     if F:
         U = U ** M
     d = d ** 2
     J = np.sum(np.dot(U, d))
     return J
+
+
 def distance(X, centers):
+    """
+    Compute distance of each data from centers
+    Parameters
+    ------
+    X : K * 2 array
+        Our data
+    centers : C * 2 array
+        Center of each cluster
+
+    Returns
+    ------
+    dis : K * C array
+        Distance of data from each center
+    """
     dis = []
     for i in range(K):
         tmp = []
@@ -29,7 +60,23 @@ def distance(X, centers):
     dis = np.array(dis)
     return dis
 
+
 def center(X, U):
+    """
+    Compute Center Hard c means: Sum(X * U) / SUM(U)
+    Compute Center fuzzy c means: Sum(X^2 * U) / SUM(U)
+
+    Parameters
+    ------
+    X : K * 2 array
+        
+    U : C * K array
+        Membership values of data for each cluster
+
+    Returns
+    ------
+    centers : C * 2 array
+    """
     centers = []
 
     p = 1
