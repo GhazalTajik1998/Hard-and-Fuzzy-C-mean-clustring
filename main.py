@@ -78,10 +78,9 @@ def center(X, U):
     centers : C * 2 array
     """
     centers = []
-
     p = 1
     if F:
-        p = 2
+        p = M
 
     for i in range(C):
         tmp = []
@@ -100,6 +99,13 @@ def center(X, U):
 
 
 def generate_U():
+    """
+    Compute random U array
+
+    Returns
+    ------
+    centers : C * K random array
+    """
     zero_mat = np.zeros((C, K))
     for j in range(K):
         i = np.random.randint(0,3)
@@ -110,6 +116,20 @@ def generate_U():
 
 
 def update_fuzzy(d, U):
+    """
+    Update membership values for fuzzy c-means --> U
+
+    Parameters
+    ------
+    d : K * C array
+        distance of each data from C
+    U : C * K array
+        Membership values of data for each cluster
+
+    Returns
+    ------
+    centers : Updated U --> C * K array
+    """
     compute_J(d.copy(), U.copy())
     for i in range(K):
         # each data
@@ -142,7 +162,13 @@ def update_fuzzy(d, U):
 
 
 def main_fuzz(X):
-    
+    """
+    main function for fuzzy c-means clustring
+
+    Parameters
+    ------
+    X : K * 2 array
+    """
     myU = []
     U = generate_U()
     myU.append(U)
@@ -167,11 +193,22 @@ def main_fuzz(X):
         m = np.amax(tmp)
         if m < 0.01:
             break
-    plt.plot(x, y)
-    plt.show()
 
 def update_hard(d, U):
+    """
+    Update membership values for hard c-means --> U
 
+    Parameters
+    ------
+    d : K * C array
+        distance of each data from C
+    U : C * K array
+        Membership values of data for each cluster
+
+    Returns
+    ------
+    centers : Updated U --> C * K array
+    """
     for i in range(K):
         dx = d[i]
         j = np.where(dx == min(dx))[0][0]
@@ -182,6 +219,9 @@ def update_hard(d, U):
     return U
 
 def plot(X, U):
+    """
+    Plotting clustered data
+    """
     x = X[:, 0:1]
     y = X[:,1:2]
 
@@ -191,6 +231,7 @@ def plot(X, U):
     plt.show()
 
 def main_hard(X):
+
     U = generate_U()
 
     for i in range(10):
