@@ -160,6 +160,31 @@ def update_fuzzy(d, U):
 
     return U
 
+def plot_fuzz(X, U):
+    """
+    Plotting clustered data
+    """
+    x = X[:, 0:1]
+    y = X[:,1:2]
+    x_data = [[] for i in range(C)]
+    y_data = [[] for i in range(C)]
+    values = [[] for i in range(C)]
+    for i in range(K):
+        u = U[:,i]
+        m = np.max(u)
+        index = np.where(u == m)[0][0]
+
+        for j in range(C):
+            if index == j:
+                x_data[index].append(x[i][0])
+                y_data[index].append(y[i][0])
+                values[index].append(m)
+                break
+    for i in range(C):
+        plt.scatter(x_data[i], y_data[i])
+        for t,val in enumerate(values[i]):
+            plt.annotate(val, (x_data[i][t], y_data[i][t]))
+    plt.show()
 
 def main_fuzz(X):
     """
@@ -175,24 +200,23 @@ def main_fuzz(X):
 
     y = []
     x = []
-    for i in range(1000):
+    for i in range(500):
         centers = center(X,U)
         dis = distance(X, centers)
 
         j = compute_J(dis.copy(), U.copy())
-
         y.append(j)
         x.append(i)
         
         U = update_fuzzy(dis, U.copy())
         myU.append(U)
 
-
         # Stop condition
         tmp = myU[i+1] - myU[i]
         m = np.amax(tmp)
         if m < 0.01:
             break
+    plot_fuzz(X, U)
 
 def update_hard(d, U):
     """
@@ -218,7 +242,7 @@ def update_hard(d, U):
         U[:,i][j] = 1
     return U
 
-def plot(X, U):
+def plot_hard(X, U):
     """
     Plotting clustered data
     """
@@ -233,14 +257,12 @@ def plot(X, U):
 def main_hard(X):
 
     U = generate_U()
-
-    for i in range(10):
+    for i in range(5000):
         centers = center(X,U)
         dis = distance(X, centers)
         compute_J(dis.copy(), U.copy())
         U = update_hard(dis, U)
-    plot(X, U)
-
+    plot_hard(X, U)
 
 if __name__ == "__main__":
     data = np.array([[0, -2],[0, -1],[0, 1],[0, 2],[0, -5],[0, -6],[1, -1],[1, 0],
